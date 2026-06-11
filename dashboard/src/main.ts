@@ -20,10 +20,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('dashboard-management', app, document);
   const port = configService.get<string>('PORT') || '0.0.0.0';
-  await app.listen(port);
   app.enableCors({
     origin: 'http://127.0.0.1:5500',
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
+  await app.listen(port);
+
 }
 bootstrap();
