@@ -12,6 +12,8 @@ import { Roles } from 'src/common/decorators/roles.decorators';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 
+import { existsSync, mkdirSync } from 'fs'; // 👈 Yeh check karein
+
 @Controller('properties')
 export class PropertiesController {
     constructor(private propertyService: PropertiesService) { }
@@ -88,7 +90,14 @@ export class PropertiesController {
     @UseInterceptors(
         FileInterceptor('image', {
             storage: diskStorage({
-                destination: './uploads',
+                destination: (_req, file, cb) => {
+                    // Safe Check: Upload karne se pehle ensure karein ki folder real me exist karta hai
+                    const targetPath = '/tmp/uploads';
+                    if (!existsSync(targetPath)) {
+                        mkdirSync(targetPath, { recursive: true });
+                    }
+                    cb(null, targetPath);
+                },
                 filename: (_req, file, cb) => {
                     const uniqueName = Date.now() + extname(file.originalname);
                     cb(null, uniqueName);
@@ -141,3 +150,4 @@ export class PropertiesController {
 
 
 }
+
