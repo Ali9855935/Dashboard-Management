@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, resolve } from 'path';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { PropertiesService } from './properties.service';
@@ -90,16 +90,16 @@ export class PropertiesController {
     @UseInterceptors(
         FileInterceptor('image', {
             storage: diskStorage({
-                destination: (_req, _file, cb) => {
-                    const uploadPath = 'uploads';
+                destination: (_req, file, cb) => {
+                    // 💡 process.cwd() se ye automatic 'dashboard-management/uploads' banayega local par
+                    // Aur Render par bhi sahi relative root pakdega
+                    const targetPath = resolve(process.cwd(), 'uploads');
 
-                    if (!existsSync(uploadPath)) {
-                        mkdirSync(uploadPath, { recursive: true });
+                    if (!existsSync(targetPath)) {
+                        mkdirSync(targetPath, { recursive: true });
                     }
-
-                    cb(null, uploadPath);
+                    cb(null, targetPath);
                 },
-
                 filename: (_req, file, cb) => {
                     const uniqueName = Date.now() + extname(file.originalname);
                     cb(null, uniqueName);
@@ -116,23 +116,17 @@ export class PropertiesController {
                 description: { type: 'string' },
                 price: { type: 'number' },
                 location: { type: 'string' },
-                image: {
-                    type: 'string',
-                    format: 'binary',
-                },
+                image: { type: 'string', format: 'binary' },
             },
+            required: ['title', 'description', 'price', 'location', 'image']
         },
     })
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN, Role.SUPER_ADMIN)
     createProperty(@UploadedFile() file: Express.Multer.File, @Body() dto: CreatePropertyDto, @Req() req) {
-        console.log('FILE:', file);
-        console.log('BODY:', dto);
-        return this.propertyService.create(dto, file, req.user)
+        return this.propertyService.create(dto, file, req.user);
     }
-
-
 
 
 
