@@ -4,11 +4,12 @@ import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 // import dns from 'dns';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
 
   // dns.setDefaultResultOrder('ipv4first');
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -26,6 +27,9 @@ async function bootstrap() {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  app.useStaticAssets('/tmp/uploads', {
+    prefix: '/uploads/',
   });
   await app.listen(port);
 
