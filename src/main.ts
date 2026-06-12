@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 // import dns from 'dns';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
 
@@ -28,9 +29,12 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
-  app.useStaticAssets('/tmp/uploads', {
-    prefix: '/uploads/',
-  });
+  app.useStaticAssets(
+    join(process.cwd(), 'uploads'),
+    {
+      prefix: '/uploads/',
+    },
+  );
   await app.listen(port);
 
 }

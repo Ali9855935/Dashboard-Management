@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard';
@@ -90,13 +90,16 @@ export class PropertiesController {
     @UseInterceptors(
         FileInterceptor('image', {
             storage: diskStorage({
-                destination: (_req, file, cb) => {
-                    const targetPath = '/tmp/uploads';
-                    if (!existsSync(targetPath)) {
-                        mkdirSync(targetPath, { recursive: true });
+                destination: (_req, _file, cb) => {
+                    const uploadPath = 'uploads';
+
+                    if (!existsSync(uploadPath)) {
+                        mkdirSync(uploadPath, { recursive: true });
                     }
-                    cb(null, targetPath);
+
+                    cb(null, uploadPath);
                 },
+
                 filename: (_req, file, cb) => {
                     const uniqueName = Date.now() + extname(file.originalname);
                     cb(null, uniqueName);
