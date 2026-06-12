@@ -91,7 +91,6 @@ export class PropertiesController {
         FileInterceptor('image', {
             storage: diskStorage({
                 destination: (_req, file, cb) => {
-                    // Safe Check: Upload karne se pehle ensure karein ki folder real me exist karta hai
                     const targetPath = '/tmp/uploads';
                     if (!existsSync(targetPath)) {
                         mkdirSync(targetPath, { recursive: true });
@@ -105,39 +104,12 @@ export class PropertiesController {
             }),
         }),
     )
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                title: {
-                    type: 'string'
-                },
-                description: {
-                    type: 'string'
-                },
-                price: {
-                    type: 'number'
-                },
-                location: {
-                    type: 'string'
-                },
-                image: { type: 'string', format: 'binary' },
-            },
-            required: [
-                'title',
-                'description',
-                'price',
-                'location',
-                'image'
-            ]
-        },
-    })
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN, Role.SUPER_ADMIN)
     createProperty(@UploadedFile() file: Express.Multer.File, @Body() dto: CreatePropertyDto, @Req() req) {
-
+        console.log('FILE:', file);
+        console.log('BODY:', dto);
         return this.propertyService.create(dto, file, req.user)
     }
 
