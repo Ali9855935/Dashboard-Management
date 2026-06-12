@@ -13,8 +13,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    transform: true,
   }));
 
   const config = new DocumentBuilder().setTitle('Dashboard API')
