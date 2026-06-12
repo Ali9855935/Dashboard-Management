@@ -13,6 +13,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 
 import { existsSync, mkdirSync } from 'fs'; // 👈 Yeh check karein
+import { createAdminDto } from 'src/admins/dto/create-admin.dto';
 
 @Controller('properties')
 export class PropertiesController {
@@ -86,15 +87,12 @@ export class PropertiesController {
     // }
 
 
-    @Post('create-properties')
+    @Post('create-property')
     @UseInterceptors(
         FileInterceptor('image', {
             storage: diskStorage({
-                destination: (_req, file, cb) => {
-                    // 💡 process.cwd() se ye automatic 'dashboard-management/uploads' banayega local par
-                    // Aur Render par bhi sahi relative root pakdega
+                destination: (_req, _file, cb) => {
                     const targetPath = resolve(process.cwd(), 'uploads');
-
                     if (!existsSync(targetPath)) {
                         mkdirSync(targetPath, { recursive: true });
                     }
@@ -118,15 +116,23 @@ export class PropertiesController {
                 location: { type: 'string' },
                 image: { type: 'string', format: 'binary' },
             },
-            required: ['title', 'description', 'price', 'location', 'image']
+            required: ['title', 'description', 'price', 'location', 'image'],
         },
     })
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-    createProperty(@UploadedFile() file: Express.Multer.File, @Body() dto: CreatePropertyDto, @Req() req) {
+    createProperty(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() dto: CreatePropertyDto, // Use proper DTO
+        @Req() req,
+    ) {
         return this.propertyService.create(dto, file, req.user);
     }
+
+
+
+
 
 
 

@@ -6,6 +6,7 @@ import { Property } from './schemas/property.schema';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { Role } from 'src/admins/schemas/admin.schema';
 import { BADFAMILY } from 'dns';
+import { createAdminDto } from 'src/admins/dto/create-admin.dto';
 
 
 
@@ -15,36 +16,19 @@ export class PropertiesService {
     private propertyModel: Model<Property>) { }
 
 
-    async create(dto: CreatePropertyDto, file: Express.Multer.File, admin: any) {
+    async create(dto: CreatePropertyDto, File: Express.Multer.File, admin) {
         try {
-            // 1. Check if file exists
-            if (!file) {
-                throw new BadRequestException('Property image file is required.');
-            }
-
-            // 2. Fallback for admin user identity to prevent undefined crash
-            const createdByUserId = admin ? (admin.userId || admin.id || admin._id) : 'LOCAL_TEST_USER';
-
-            // 3. Ensure price is saved as a proper number
-            const finalPrice = Number(dto.price);
-            if (isNaN(finalPrice)) {
-                throw new BadRequestException('Price must be a valid number.');
-            }
-
-            // 4. Save to MongoDB Atlas
-            return await this.propertyModel.create({
+            return this.propertyModel.create({
                 ...dto,
-                price: finalPrice,
-                image: file.filename, // Database me sirf filename ('171822.png') save hoga
-                createdBy: createdByUserId
-            });
-
-        } catch (error: any) {
-            console.error('[SERVICE ERROR LOG]', error.message);
-            throw new BadRequestException(error.message || 'Failed to create property due to validation error.');
+                image: File.filename,
+                createdBy: admin.userId
+            })
         }
-    }
+        catch (error: any) {
+            throw new BadRequestException(error.message)
+        }
 
+    }
 
     async adminProperty(userId: string, user) {
         try {
