@@ -17,6 +17,7 @@ export class PropertiesService {
 
     async create(dto: CreatePropertyDto, File: Express.Multer.File, admin) {
         try {
+            console.log('FILE =>', File);
             return this.propertyModel.create({
                 ...dto,
                 image: File.filename,
