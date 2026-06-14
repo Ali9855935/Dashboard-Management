@@ -26,8 +26,7 @@ export class AdminsService {
         try {
             const salt = 10;
             const hashpass = await bcrypt.hash(adminDto.password, salt);
-            const newAdmin = new this.adminModel({ ...adminDto, password: hashpass, role: Role.ADMIN })
-            await newAdmin.save();
+            const newAdmin = this.adminModel.create({ ...adminDto, password: hashpass, role: Role.ADMIN })
             return {
                 message: 'Admin Created by Super_Admin',
                 newAdmin
@@ -43,8 +42,8 @@ export class AdminsService {
 
     async getAdmins() {
         try {
-            const admin = await this.adminModel.find();
-            return admin
+            const admins = await this.adminModel.find();
+            return admins;
         }
         catch (error: any) {
             throw new BadRequestException(error.message)
