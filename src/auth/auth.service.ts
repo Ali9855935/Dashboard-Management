@@ -51,12 +51,12 @@ export class AuthService {
         email: dto.email
       })
       if (!admin) {
-        throw new UnauthorizedException('Invalid Credentials')
+        throw new UnauthorizedException('Please Enter Your Valid Email')
       }
 
       const isMatch = await bcrypt.compare(dto.password, admin.password)
       if (!isMatch) {
-        throw new UnauthorizedException('Invalid Credentials')
+        throw new UnauthorizedException('Incorrect Password')
       }
 
       const payload = {
