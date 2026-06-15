@@ -1,9 +1,9 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
-import mongoose, { Types } from "mongoose"
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose, { Types } from "mongoose";
 
 @Schema({ timestamps: true })
+export class Provideservice {
 
-export class Service {
     @Prop({ required: true, trim: true })
     title!: string
 
@@ -18,5 +18,7 @@ export class Service {
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true })
     createdBy!: Types.ObjectId
+
+
 }
-export const ServiceSchema = SchemaFactory.createForClass(Service)
+export const provideServicesSchema = SchemaFactory.createForClass(Provideservice)

@@ -7,7 +7,7 @@ import { AdminsModule } from './admins/admins.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ServicesModule } from './services/services.module';
+import { ProvideservicesModule } from './provideservices/provideservices.module';
 
 
 @Module({
@@ -22,7 +22,7 @@ import { ServicesModule } from './services/services.module';
         uri: configService.get<string>('MONGO_URI'),
       };
     }
-  }), CommonModule, PropertiesModule, AdminsModule, AuthModule, ServicesModule],
+  }), CommonModule, PropertiesModule, AdminsModule, AuthModule, ProvideservicesModule],
   controllers: [AppController],
   providers: [AppService],
 })

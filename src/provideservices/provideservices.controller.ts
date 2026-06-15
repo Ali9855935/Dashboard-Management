@@ -1,7 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
-import { Services } from './services.service';
-import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
+
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from 'src/admins/schemas/admin.schema';
@@ -12,10 +9,13 @@ import { extname, resolve } from 'path';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { existsSync, mkdirSync } from 'fs';
+import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors, Get, Param, Patch, Delete } from '@nestjs/common';
+import { CreateProvideserviceDto } from './dto/create-provideservice.dto';
+import { ProvideServices } from './provideservices.service';
 
-@Controller('services')
-export class ServicesController {
-  constructor(private readonly Service: Services) { }
+@Controller('provideservices')
+export class ProvideservicesController {
+  constructor(private readonly provideservicesService: ProvideServices) { }
 
   @Post()
   @ApiTags('Create-Services')
@@ -59,32 +59,32 @@ export class ServicesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
 
-  create(@Body() dto: CreateServiceDto, @Req() req, @UploadedFiles() file: Express.Multer.File[]) {
-    return this.Service.createService(dto, file, req.user);
+  create(@Body() dto: CreateProvideserviceDto, @Req() req, @UploadedFiles() file: Express.Multer.File[]) {
+    return this.provideservicesService.createService(dto, file, req.user);
   }
 
   @Get()
   @ApiTags('getAllServices')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN)
   findAll(@Req() req) {
-    return this.Service.findAll(req.user, req.user.userId);
+    return this.provideservicesService.findAll(req.user, req.user.userId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.Service.findOne(+id);
+    return this.provideservicesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.Service.update(+id, updateServiceDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
+  //   return this.provideservicesService.update(+id, updateServiceDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.Service.remove(+id);
+    return this.provideservicesService.remove(+id);
   }
 }
 

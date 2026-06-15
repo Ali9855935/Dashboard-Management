@@ -1,21 +1,21 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Service } from './schema/service.schema';
+
 import { Model } from 'mongoose';
 import { Role } from 'src/admins/schemas/admin.schema';
+import { CreateProvideserviceDto } from './dto/create-provideservice.dto';
+import { Provideservice } from './entities/provideservice.entity';
+
 
 @Injectable()
-export class Services {
-  AdminModel: any;
+export class ProvideServices {
   constructor(
-    @InjectModel(Service.name)
-    private serviceModel: Model<Service>,
+    @InjectModel(Provideservice.name)
+    private serviceModel: Model<Provideservice>,
   ) { }
 
 
-  async createService(dto: CreateServiceDto, files: Express.Multer.File[], admin) {
+  async createService(dto: CreateProvideserviceDto, files: Express.Multer.File[], admin) {
     try {
       const images = files.map(e =>
         e.filename
@@ -24,7 +24,7 @@ export class Services {
         ? (dto as any).description
         : [(dto as any).description].filter(Boolean)
 
-      return this.serviceModel.create({
+      return await this.serviceModel.create({
         ...dto,
         description,
         images: images,
@@ -45,8 +45,8 @@ export class Services {
       //const admin = this.AdminModel.find()
       if (admin.role === Role.SUPER_ADMIN)
         return this.serviceModel.find().populate("createdBy", "name email");
-      const services = this.serviceModel.find({ createdBy: userId }).populate('createdBy', 'name email');
-      return { services }
+      const service = this.serviceModel.find({ createdBy: userId }).populate('createdBy', 'name email');
+      return service
     }
     catch (error) {
       throw new BadRequestException(error)
@@ -57,9 +57,9 @@ export class Services {
     return `This action returns a #${id} service`;
   }
 
-  update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
-  }
+  // update(id: number, updateServiceDto: UpdateServiceDto) {
+  //   return `This action updates a #${id} service`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} service`;
