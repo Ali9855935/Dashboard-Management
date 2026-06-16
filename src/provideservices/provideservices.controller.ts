@@ -12,13 +12,13 @@ import { existsSync, mkdirSync } from 'fs';
 import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors, Get, Param, Patch, Delete } from '@nestjs/common';
 import { CreateProvideserviceDto } from './dto/create-provideservice.dto';
 import { ProvideServices } from './provideservices.service';
+import { UpdateProvideserviceDto } from './dto/update-provideservice.dto';
 
 @Controller('provideservices')
 export class ProvideservicesController {
   constructor(private readonly provideservicesService: ProvideServices) { }
 
-  @Post()
-  @ApiTags('Create-Services')
+  @Post('create-Service')
   @UseInterceptors(
     FilesInterceptor('images', 10, {
       storage: diskStorage({
@@ -43,6 +43,8 @@ export class ProvideservicesController {
       properties: {
         title: { type: 'string' },
         description: { type: 'string' },
+        catagory: { type: 'string' },
+
 
         images: {
           type: 'array',
@@ -52,39 +54,90 @@ export class ProvideservicesController {
           }
         }
       },
-      required: ['title', 'description', 'images'],
+      required: ['title', 'description', 'catagory', 'images'],
     },
   })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-
   create(@Body() dto: CreateProvideserviceDto, @Req() req, @UploadedFiles() file: Express.Multer.File[]) {
     return this.provideservicesService.createService(dto, file, req.user);
   }
 
-  @Get()
+  //Protected Api
+  @Get('fetchAllServices')
   @ApiTags('getAllServices')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN)
   findAll(@Req() req) {
-    return this.provideservicesService.findAll(req.user, req.user.userId);
+    return this.provideservicesService.findAll(req.user.userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.provideservicesService.findOne(+id);
+  @Get('public')
+  @ApiTags('getAllServices')
+  findAl(@Req() req) {
+    return this.provideservicesService.publicServices();
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-  //   return this.provideservicesService.update(+id, updateServiceDto);
-  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.provideservicesService.remove(+id);
+
+  @Delete('deletdServices/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Roles(Role.SUPER_ADMIN)
+  remove(@Param('id') id: string, @Req() req) {
+    return this.provideservicesService.remove(id, req.user.userId);
+  }
+
+
+
+  @Patch('updateServices/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: diskStorage({
+        destination: (_req, _file, cb) => {
+          const targetPath = resolve(process.cwd(), 'uploads');
+          if (!existsSync(targetPath)) {
+            mkdirSync(targetPath, { recursive: true });
+          }
+          cb(null, targetPath);
+        },
+        filename: (_req, file, cb) => {
+          const uniqueName = Date.now() + extname(file.originalname);
+          cb(null, uniqueName);
+        },
+      }),
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        description: { type: 'string' },
+        images: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary'
+          }
+        }
+      },
+    },
+  })
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProvideserviceDto,
+    @Req() req,
+    @UploadedFiles() files: Express.Multer.File[]
+  ) {
+    // ORDER: 1. id, 2. dto, 3. user object, 4. files array
+    return this.provideservicesService.update(id, dto, req.user, files);
   }
 }
 

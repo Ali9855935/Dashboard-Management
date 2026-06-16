@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Types } from "mongoose";
+import { Admin } from "src/admins/schemas/admin.schema";
 
 @Schema({ timestamps: true })
 export class Provideservice {
@@ -8,7 +9,10 @@ export class Provideservice {
     title!: string
 
     @Prop({ required: true, trim: true })
-    description!: string[]
+    description!: string
+
+    @Prop({ required: true, trim: true })
+    category!: string
 
     @Prop({ default: [], type: [String] })
     images!: string[]
@@ -17,8 +21,7 @@ export class Provideservice {
     isActive!: boolean
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true })
-    createdBy!: Types.ObjectId
-
+    createdBy!: Admin
 
 }
 export const provideServicesSchema = SchemaFactory.createForClass(Provideservice)
