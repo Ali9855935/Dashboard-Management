@@ -43,7 +43,7 @@ export class ProvideservicesController {
       properties: {
         title: { type: 'string' },
         description: { type: 'string' },
-        catagory: { type: 'string' },
+        category: { type: 'string' },
 
 
         images: {
@@ -54,7 +54,7 @@ export class ProvideservicesController {
           }
         }
       },
-      required: ['title', 'description', 'catagory', 'images'],
+      required: ['title', 'description', 'category', 'images'],
     },
   })
   @ApiBearerAuth()
@@ -79,8 +79,6 @@ export class ProvideservicesController {
   findAl(@Req() req) {
     return this.provideservicesService.publicServices();
   }
-
-
 
   @Delete('deletdServices/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -120,6 +118,7 @@ export class ProvideservicesController {
       properties: {
         title: { type: 'string' },
         description: { type: 'string' },
+        category: { type: 'string' },
         images: {
           type: 'array',
           items: {
