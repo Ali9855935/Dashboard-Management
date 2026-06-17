@@ -69,7 +69,7 @@ export class ProvideservicesController {
   @ApiTags('getAllServices')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.SUPER_ADMIN)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   findAll(@Req() req) {
     return this.provideservicesService.findAll(req.user.userId);
   }
