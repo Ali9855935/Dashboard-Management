@@ -3,7 +3,7 @@
 /node_modules
 /build
 /.env
-
+uploads/*!uploads/.gitkeep
 
 # Logs
 logs
