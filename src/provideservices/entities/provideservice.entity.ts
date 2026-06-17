@@ -21,7 +21,7 @@ export class Provideservice {
     isActive!: boolean
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true })
-    createdBy!: Admin
+    createdBy!: Types.ObjectId | Admin
 
 }
 export const provideServicesSchema = SchemaFactory.createForClass(Provideservice)

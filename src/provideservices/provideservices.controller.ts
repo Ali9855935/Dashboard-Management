@@ -73,7 +73,7 @@ export class ProvideservicesController {
   findAll(@Req() req) {
     // console.log(req.user);
 
-    return this.provideservicesService.findAll(req.user.userId);
+    return this.provideservicesService.findAll(req.user.userId, req.user);
   }
 
   @Get('public')

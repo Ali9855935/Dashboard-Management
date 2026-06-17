@@ -39,24 +39,30 @@ export class ProvideServices {
     }
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string, admin: any) {
     try {
-      const query = {};
-
-      if (userId) {
-        // 2. Cast the string to a proper Mongoose ObjectId
-        query['createdBy'] = new Types.ObjectId(userId);
+      if (admin.role === Role.SUPER_ADMIN) {
+        // Sabhi admins ki services
+        return this.serviceModel.find().populate('createdBy', 'name role');
       }
 
-      return await this.serviceModel
-        .find(query)
-        .populate('createdBy', 'name role')
-        .exec();
-    }
-    catch (error) {
-      throw new BadRequestException(error);
+      if (!Types.ObjectId.isValid(userId)) {
+        throw new BadRequestException('Invalid User ID');
+      }
+
+      // Normal admin
+      return this.serviceModel
+        .find({ createdBy: new Types.ObjectId(userId) })
+        .populate('createdBy', 'name role');
+
+    } catch (error) {
+      // console.log(error);
+
+      // Agar error pehle se BadRequestException hai, toh use waise hi throw karein
+      throw new BadRequestException("Something went wrong");
     }
   }
+
 
   async publicServices() {
     return this.serviceModel.find();
