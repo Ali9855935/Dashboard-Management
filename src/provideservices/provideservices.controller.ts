@@ -71,6 +71,8 @@ export class ProvideservicesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   findAll(@Req() req) {
+    // console.log(req.user);
+
     return this.provideservicesService.findAll(req.user.userId);
   }
 

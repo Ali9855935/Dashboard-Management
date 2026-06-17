@@ -11,6 +11,7 @@ import { UpdateProvideserviceDto } from './dto/update-provideservice.dto';
 
 @Injectable()
 export class ProvideServices {
+  adminModel: any;
   constructor(
     @InjectModel(Provideservice.name)
     private serviceModel: Model<Provideservice>,
@@ -38,13 +39,22 @@ export class ProvideServices {
     }
   }
 
-  findAll(userId: string) {
+  async findAll(userId: string) {
     try {
-      return this.serviceModel.find().populate('createdBy', 'name role');
+      const query = {};
 
+      if (userId) {
+        // 2. Cast the string to a proper Mongoose ObjectId
+        query['createdBy'] = new Types.ObjectId(userId);
+      }
+
+      return await this.serviceModel
+        .find(query)
+        .populate('createdBy', 'name role')
+        .exec();
     }
     catch (error) {
-      throw new BadRequestException(error)
+      throw new BadRequestException(error);
     }
   }
 
