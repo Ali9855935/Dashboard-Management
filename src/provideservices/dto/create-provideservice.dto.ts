@@ -10,7 +10,7 @@ export class CreateProvideserviceDto {
     title!: string;
 
     @ApiProperty({ example: 'High-quality industrial fabrication services.' })
-    @IsString({ each: true })
+    @IsString()
     @IsNotEmpty()
     shortDescription!: string;
 
@@ -21,7 +21,7 @@ export class CreateProvideserviceDto {
 
     @ApiProperty({ example: 'Heavy-duty MS sheets, Anti-corrosive paint' })
     @IsArray()
-    @IsString()
+    @IsString({ each: true })
     @IsNotEmpty()
     features!: string[];
 
