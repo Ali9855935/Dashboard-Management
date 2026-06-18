@@ -20,10 +20,10 @@ export class CreateProvideserviceDto {
     longDescription!: string;
 
     @ApiProperty({ example: 'Heavy-duty MS sheets, Anti-corrosive paint' })
-    // @IsArray() // Ab ye validation fail nahi hogi, kyunki upar wali line ise array bana chuki hai
-    // @IsString({ each: true })
+    @IsArray()
+    @IsString()
     @IsNotEmpty()
-    features!: any;
+    features!: string[];
 
     // @ApiProperty({ example: ['https://example.com/img1.jpg'] })
     @IsArray()
