@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString, IsArray, IsOptional, IsBoolean } from "class-validator";
-import { Transform } from "stream";
+import { Transform } from 'class-transformer';
 
 export class CreateProvideserviceDto {
 
@@ -20,9 +20,13 @@ export class CreateProvideserviceDto {
     longDescription!: string;
 
     @ApiProperty({ example: 'Heavy-duty MS sheets, Anti-corrosive paint' })
+    @Transform(({ value }) =>
+        typeof value === 'string'
+            ? value.split(',').map(item => item.trim())
+            : value
+    )
     @IsArray()
     @IsString({ each: true })
-    @IsNotEmpty()
     features!: string[];
 
     // @ApiProperty({ example: ['https://example.com/img1.jpg'] })

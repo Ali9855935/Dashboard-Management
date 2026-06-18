@@ -14,6 +14,7 @@ import { CreateProvideserviceDto } from './dto/create-provideservice.dto';
 import { ProvideServices } from './provideservices.service';
 import { UpdateProvideserviceDto } from './dto/update-provideservice.dto';
 import { features } from 'process';
+import { log } from 'console';
 
 @Controller('provideservices')
 export class ProvideservicesController {
@@ -47,9 +48,10 @@ export class ProvideservicesController {
         longDescription: { type: 'string' },
         features: {
           type: 'array',
-          items: { type: 'string' },
+          items: {
+            type: 'string'
+          }
         },
-
 
         images: {
           type: 'array',
@@ -66,6 +68,8 @@ export class ProvideservicesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   create(@Body() dto: CreateProvideserviceDto, @Req() req, @UploadedFiles() file: Express.Multer.File[]) {
+    console.log(dto.features);
+
     return this.provideservicesService.createService(dto, file, req.user);
   }
 
