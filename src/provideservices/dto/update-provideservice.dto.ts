@@ -1,29 +1,37 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreateProvideserviceDto } from './create-provideservice.dto';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsArray, IsOptional, IsBoolean } from "class-validator";
 
-export class UpdateProvideserviceDto extends PartialType(CreateProvideserviceDto) {
+export class UpdateProvideserviceDto {
 
-    @IsNotEmpty()
+    @ApiProperty({ example: 'Structural Fabrication works' })
     @IsString()
-    @ApiProperty({ example: 'Give the title' })
+    @IsNotEmpty()
     title!: string;
 
-
-    @IsNotEmpty()
+    @ApiProperty({ example: 'High-quality industrial fabrication services.' })
     @IsString()
-    @ApiProperty({ example: 'Give the description' })
-    description!: string;
+    @IsNotEmpty()
+    shortDescription!: string;
 
+    @ApiProperty({ example: 'We provide heavy-duty structural fabrication works for industries...' })
+    @IsString()
+    @IsNotEmpty()
+    longDescription!: string;
 
+    @ApiProperty({ example: 'Heavy-duty MS sheets, Anti-corrosive paint' })
+    // @IsArray() // Ab ye validation fail nahi hogi, kyunki upar wali line ise array bana chuki hai
+    // @IsString({ each: true })
+    @IsNotEmpty()
+    features!: any;
+
+    @ApiProperty({ example: ['https://example.com/img1.jpg'] })
     @IsArray()
+    @IsString({ each: true }) // Array ke andar ka har ek item string URL hona chahiye
     @IsOptional()
-    @IsString({ each: true })
-    images?: string[];
+    images!: string[];
 
-
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty({ example: 'Give the catagory' })
-    category!: string;
+    @ApiProperty({ example: true, default: true })
+    @IsBoolean()
+    @IsOptional()
+    isActive?: boolean;
 }

@@ -24,13 +24,22 @@ export class ProvideServices {
         e.filename
       )
 
+      let finalFeatures: string[] = [];
+
+      if (dto.features) {
+        if (typeof dto.features === 'string') {
+          finalFeatures = (dto.features as string).split(',').map(f => f.trim());
+        } else if (Array.isArray(dto.features)) {
+          finalFeatures = dto.features;
+        }
+      }
+
       return await this.serviceModel.create({
         ...dto,
+        features: finalFeatures,
         images: images,
         createdBy: admin.userId,
       })
-
-
 
     }
 

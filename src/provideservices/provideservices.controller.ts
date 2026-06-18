@@ -13,6 +13,7 @@ import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors,
 import { CreateProvideserviceDto } from './dto/create-provideservice.dto';
 import { ProvideServices } from './provideservices.service';
 import { UpdateProvideserviceDto } from './dto/update-provideservice.dto';
+import { features } from 'process';
 
 @Controller('provideservices')
 export class ProvideservicesController {
@@ -42,8 +43,12 @@ export class ProvideservicesController {
       type: 'object',
       properties: {
         title: { type: 'string' },
-        description: { type: 'string' },
-        category: { type: 'string' },
+        shortDescription: { type: 'string' },
+        longDescription: { type: 'string' },
+        features: {
+          type: 'array',
+          items: { type: 'string' },
+        },
 
 
         images: {
@@ -54,7 +59,7 @@ export class ProvideservicesController {
           }
         }
       },
-      required: ['title', 'description', 'category', 'images'],
+      required: ['title', 'shortDescription', 'features', 'images', 'longDescription'],
     },
   })
   @ApiBearerAuth()
@@ -119,8 +124,12 @@ export class ProvideservicesController {
       type: 'object',
       properties: {
         title: { type: 'string' },
-        description: { type: 'string' },
-        category: { type: 'string' },
+        shortDescription: { type: 'string' },
+        longDescription: { type: 'string' },
+        features: {
+          type: 'array',
+          items: { type: 'string' },
+        },
         images: {
           type: 'array',
           items: {

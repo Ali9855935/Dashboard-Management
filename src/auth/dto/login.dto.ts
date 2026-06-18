@@ -9,6 +9,7 @@ export class loginDto {
 
 
     @IsNotEmpty()
+    @ApiProperty({ example: 'enter your password' })
     @IsString()
     password!: string
 }
