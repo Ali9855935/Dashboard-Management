@@ -5,7 +5,7 @@ import { Admin } from "src/admins/schemas/admin.schema";
 @Schema({ timestamps: true })
 export class Provideservice {
 
-    @Prop({ required: true, trim: true, unique: true })
+    @Prop({ required: true, trim: true, })
     title!: string;
 
     @Prop({ required: true, trim: true })
