@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProvideservicesModule } from './provideservices/provideservices.module';
+import { QueryModule } from './query/query.module';
 
 
 @Module({
@@ -17,12 +18,11 @@ import { ProvideservicesModule } from './provideservices/provideservices.module'
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => {
-      // console.log('MONGO_URI =>', configService.get<string>('MONGO_URI'));
       return {
         uri: configService.get<string>('MONGO_URI'),
       };
     }
-  }), CommonModule, PropertiesModule, AdminsModule, AuthModule, ProvideservicesModule],
+  }), CommonModule, PropertiesModule, AdminsModule, AuthModule, ProvideservicesModule, QueryModule],
   controllers: [AppController],
   providers: [AppService],
 })

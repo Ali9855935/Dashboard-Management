@@ -11,7 +11,6 @@ import { UpdateProvideserviceDto } from './dto/update-provideservice.dto';
 
 @Injectable()
 export class ProvideServices {
-  adminModel: any;
   constructor(
     @InjectModel(Provideservice.name)
     private serviceModel: Model<Provideservice>,
